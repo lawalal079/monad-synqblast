@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi'
 import { ethers } from 'ethers'
-import ChainReactionGameABI from '../artifacts/contracts/ChainReactionGame.sol/ChainReactionGame.json'
+import ChainReactionGameABI from '../abi/ChainReactionGame.json'
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CHAIN_REACTION_GAME_ADDRESS!;
 

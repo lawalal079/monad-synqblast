@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import GameBoard from '../components/GameBoard'
 import { useAccount, usePublicClient } from 'wagmi'
 import { ethers } from 'ethers'
-import ChainReactionGameABI from '../artifacts/contracts/ChainReactionGame.sol/ChainReactionGame.json'
+import ChainReactionGameABI from '../abi/ChainReactionGame.json'
 import { motion } from 'framer-motion'
 
 export default function HomePage() {

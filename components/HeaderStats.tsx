@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useAccount, usePublicClient } from 'wagmi';
-import ChainReactionGameABI from '../artifacts/contracts/ChainReactionGame.sol/ChainReactionGame.json';
+import ChainReactionGameABI from '../abi/ChainReactionGame.json';
 import ScoreBoard from './ScoreBoard';
 
 export default function HeaderStats() {

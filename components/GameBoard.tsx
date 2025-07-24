@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Reactor from './Reactor'
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi';
 import { ethers } from 'ethers';
-import ChainReactionGameABI from '../artifacts/contracts/ChainReactionGame.sol/ChainReactionGame.json';
+import ChainReactionGameABI from '../abi/ChainReactionGame.json';
 
 interface GameBoardProps {
   isConnected: boolean

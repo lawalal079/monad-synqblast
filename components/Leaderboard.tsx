@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useAccount, usePublicClient } from 'wagmi'
 import { motion } from 'framer-motion'
 import { ethers } from 'ethers'
-import ChainReactionGameABI from '../artifacts/contracts/ChainReactionGame.sol/ChainReactionGame.json'
+import ChainReactionGameABI from '../abi/ChainReactionGame.json'
 import WelcomeBonusClaimModal from './WelcomeBonusClaimModal'
 
 const CHAIN_REACTION_GAME_ADDRESS = process.env.NEXT_PUBLIC_CHAIN_REACTION_GAME_ADDRESS as string;
