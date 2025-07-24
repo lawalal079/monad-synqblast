@@ -51,8 +51,8 @@ npm run dev
 Create a `.env.local` file with the following variables:
 
 ```env
-NEXT_PUBLIC_MONAD_RPC_URL=https://rpc.testnet.monad.xyz
-NEXT_PUBLIC_CHAIN_ID=1337
+NEXT_PUBLIC_MONAD_RPC_URL=https://testnet-rpc.monad.xyz
+NEXT_PUBLIC_CHAIN_ID=10143
 PRIVATE_KEY=your_private_key_here
 ```
 
@@ -86,14 +86,6 @@ npm run deploy
 npm run build
 npm run start
 ```
-
-## 🎯 Mission 6 Requirements
-
-✅ **Open Source**: MIT License  
-✅ **Novel Multisynq Usage**: Chain reaction orchestration  
-✅ **Monad Testnet Integration**: Full blockchain interaction  
-✅ **Bonus - Silly/Left Curve**: Fun chain reaction mechanics  
-
 ## 🤝 Contributing
 
 This is a Mission 6 submission. Feel free to fork and experiment with the chain reaction mechanics!
