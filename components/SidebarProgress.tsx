@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useAccount, usePublicClient } from 'wagmi';
-import ChainReactionGameABI from '../artifacts/contracts/ChainReactionGame.sol/ChainReactionGame.json';
+import ChainReactionGameABI from '../abi/ChainReactionGame.json';
 
 const ROLES = [
   { name: 'Novice', min: 0 },
