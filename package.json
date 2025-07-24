@@ -1,0 +1,45 @@
+{
+  "name": "multisynq-chain-reaction",
+  "version": "1.0.0",
+  "description": "A novel chain reaction game built with Multisynq on Monad Testnet",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "deploy": "hardhat run scripts/deploy.js --network monad-testnet"
+  },
+  "keywords": [
+    "multisynq",
+    "monad",
+    "blockchain",
+    "game",
+    "chain-reaction"
+  ],
+  "author": "Mission 6 Team",
+  "license": "MIT",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.4.0",
+    "@web3modal/wagmi": "^5.1.11",
+    "autoprefixer": "10.4.16",
+    "dotenv": "^17.2.0",
+    "ethers": "^6.15.0",
+    "framer-motion": "10.16.4",
+    "next": "^15.4.1",
+    "postcss": "8.4.31",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tailwindcss": "3.3.6",
+    "viem": "^2.32.0",
+    "wagmi": "^2.15.7"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "@types/node": "20.9.0",
+    "@types/react": "18.2.37",
+    "@types/react-dom": "18.2.15",
+    "hardhat": "^2.26.0",
+    "typescript": "5.2.2"
+  }
+}

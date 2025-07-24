@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+}
+
+@layer utilities {
+  /* Let Web3Modal handle its own styling - minimal interference */
+  w3m-modal {
+    z-index: 9999 !important;
+  }
+  
+  /* Web3Modal backdrop */
+  w3m-modal::part(backdrop),
+  [data-w3m-modal]::part(backdrop) {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
+  }
+  
+  /* Ensure modal content is visible */
+  w3m-modal::part(container),
+  [data-w3m-modal]::part(container) {
+    background: white !important;
+    border-radius: 12px !important;
+    max-width: 400px !important;
+    margin: auto !important;
+    position: relative !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-energy-yellow to-reaction-orange bg-clip-text text-transparent;
+  }
+  
+  .glow {
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
+  }
+  
+  .chain-glow {
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.6);
+  }
+}
+
+@layer components {
+  .game-board {
+    @apply bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg p-4 shadow-2xl;
+  }
+  
+  .reactor {
+    @apply relative w-12 h-12 rounded-full border-2 border-white/20 transition-all duration-300 cursor-pointer;
+  }
+  
+  .reactor:hover {
+    @apply scale-110 border-white/40;
+  }
+  
+  .reactor-active {
+    @apply animate-pulse-slow border-energy-yellow;
+  }
+  
+  .reactor-triggered {
+    @apply animate-pulse border-green-500 shadow-lg shadow-green-500/50;
+  }
+  
+  .reactor-chain {
+    @apply animate-chain-reaction border-reaction-orange;
+  }
+  
+  .chain-line {
+    @apply absolute bg-gradient-to-r from-energy-yellow to-reaction-orange h-1 rounded-full;
+  }
+  
+  .game-button {
+    @apply px-6 py-3 bg-monad-blue hover:bg-monad-purple text-white font-semibold rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+  }
+  
+  .game-card {
+    @apply bg-white/10 backdrop-blur-sm rounded-lg p-6 border border-white/20;
+  }
+  
+  .score-display {
+    @apply text-2xl font-bold text-energy-yellow;
+  }
+  
+  .leaderboard-item {
+    @apply flex justify-between items-center p-3 bg-white/5 rounded-lg hover:bg-white/10 transition-colors;
+  }
+}

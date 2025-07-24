@@ -1,0 +1,187 @@
+/* FUTURISTIC HEXAGONAL GAMING INTERFACE STYLES */
+
+.hexagon-container {
+  width: 200px;
+  height: 200px;
+  position: relative;
+}
+
+.hexagon {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: rotate(30deg);
+  border-radius: 20px;
+  transition: all 0.3s ease;
+}
+
+.hexagon-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: rotate(-30deg);
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.hexagon-clip {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+/* Floating Circular Pods */
+.circular-pod {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  position: relative;
+  transition: all 0.4s ease;
+}
+
+.circular-pod:hover {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.circular-pod-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Diamond Control Panels */
+.diamond-panel {
+  width: 300px;
+  height: 300px;
+  transform: rotate(45deg);
+  border-radius: 30px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.diamond-panel:hover {
+  transform: rotate(45deg) scale(1.05);
+}
+
+.diamond-inner {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-45deg);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Triangular Info Pods */
+.triangle-pod {
+  width: 0;
+  height: 0;
+  border-left: 100px solid transparent;
+  border-right: 100px solid transparent;
+  border-bottom: 173px solid;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.triangle-pod:hover {
+  transform: scale(1.1);
+}
+
+/* Animated Borders */
+.animated-border {
+  position: relative;
+  overflow: hidden;
+}
+
+.animated-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.4), transparent);
+  animation: borderSweep 2s infinite;
+}
+
+@keyframes borderSweep {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* Pulsing Glow Effects */
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes pulseGlow {
+  from {
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+  }
+  to {
+    box-shadow: 0 0 40px rgba(0, 255, 255, 0.8), 0 0 60px rgba(0, 255, 255, 0.4);
+  }
+}
+
+/* Floating Animation */
+.float-animation {
+  animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Holographic Effect */
+.holographic {
+  background: linear-gradient(45deg, 
+    rgba(0, 255, 255, 0.1) 0%,
+    rgba(255, 0, 255, 0.1) 25%,
+    rgba(255, 255, 0, 0.1) 50%,
+    rgba(0, 255, 255, 0.1) 75%,
+    rgba(255, 0, 255, 0.1) 100%);
+  background-size: 400% 400%;
+  animation: holographicShift 4s ease infinite;
+}
+
+@keyframes holographicShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .hexagon-container {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .circular-pod {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .diamond-panel {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .hexagon-container {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .circular-pod {
+    width: 110px;
+    height: 110px;
+  }
+  
+  .diamond-panel {
+    width: 200px;
+    height: 200px;
+  }
+}
