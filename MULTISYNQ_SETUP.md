@@ -100,4 +100,4 @@ Your **Monad Synqblast** game is now a fully functional **real-time multiplayer 
 
 ---
 
-**🎉 Congratulations! Your Mission 6 submission is complete with novel Multisynq integration!**
+**🎉 Congratulations! Your work is complete with novel Multisynq integration!**
