@@ -377,7 +377,7 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
         const exists = allReactors.find(r => r.x === mpReactor.x && r.y === mpReactor.y);
         if (!exists) {
           allReactors.push({
-            id: `${mpReactor.x}-${mpReactor.y}`,
+            id: mpReactor.x * 1000 + mpReactor.y, // Generate numeric ID from coordinates
             x: mpReactor.x,
             y: mpReactor.y,
             energy: mpReactor.energyLevel,
