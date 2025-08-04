@@ -6,6 +6,7 @@ import Reactor from './Reactor'
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi';
 import { ethers } from 'ethers';
 import ChainReactionGameABI from '../abi/ChainReactionGame.json';
+import { useMultisynq } from './MultisynqGameSync';
 
 interface GameBoardProps {
   isConnected: boolean
@@ -69,6 +70,10 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
   const [utcRoundInfo, setUtcRoundInfo] = useState(getUtcRoundInfo());
+  
+  // Multisynq integration for real-time multiplayer
+  const multisynq = useMultisynq();
+  const [multiplayerReactors, setMultiplayerReactors] = useState<any[]>([]);
   
   // Force clear function for manual testing
   const forceClearReactors = () => {
@@ -326,6 +331,21 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
       
       await publicClient.waitForTransactionReceipt({ hash });
       
+      // 🚀 MULTISYNQ: Sync reactor trigger with all players in real-time
+      if (multisynq && selectedReactors.length > 0) {
+        selectedReactors.forEach(reactorId => {
+          const reactor = reactors.find(r => r.id === reactorId);
+          if (reactor) {
+            multisynq.triggerReactor(reactor.x, reactor.y, { 
+              chainLength: selectedReactors.length,
+              txHash: hash,
+              timestamp: Date.now()
+            });
+          }
+        });
+        console.log('🎮 Reactors triggered and synced with Multisynq:', selectedReactors.length);
+      }
+      
       setSelectedReactors([]); // Clear selection after trigger
       await refreshBoard();
     } catch (error) {
@@ -342,6 +362,37 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
     }
     // eslint-disable-next-line
   }, [isConnected, address, refreshTrigger]);
+
+  // Multisynq real-time synchronization effects
+  useEffect(() => {
+    if (multisynq) {
+      // Get current round reactors from Multisynq
+      const currentRoundReactors = multisynq.getCurrentRoundReactors();
+      setMultiplayerReactors(currentRoundReactors);
+      
+      // Merge multiplayer reactors with local reactors for display
+      const allReactors = [...reactors];
+      currentRoundReactors.forEach((mpReactor: any) => {
+        // Only add if not already in local reactors
+        const exists = allReactors.find(r => r.x === mpReactor.x && r.y === mpReactor.y);
+        if (!exists) {
+          allReactors.push({
+            id: `${mpReactor.x}-${mpReactor.y}`,
+            x: mpReactor.x,
+            y: mpReactor.y,
+            energy: mpReactor.energyLevel,
+            owner: mpReactor.playerId,
+            isActive: !mpReactor.triggered
+          });
+        }
+      });
+      
+      // Update reactors with multiplayer data
+      if (currentRoundReactors.length > 0) {
+        setReactors(allReactors);
+      }
+    }
+  }, [multisynq, multiplayerReactors, reactors]);
 
   // Monitor for round changes and auto-refresh
   useEffect(() => {

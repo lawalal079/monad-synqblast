@@ -13,6 +13,7 @@ import Leaderboard from '../components/Leaderboard';
 import WalletGate from '../components/WalletGate';
 import ConditionalWalletConnect from '../components/ConditionalWalletConnect';
 import SplashScreen from '../components/SplashScreen';
+import MultisynqGameSync from '../components/MultisynqGameSync';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -63,6 +64,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Main App Content - Only show when not loading */}
         {!isLoading && (
           <Providers>
+            <MultisynqGameSync
+              onPhaseChange={(phase, round) => setCurrentPhase(phase)}
+              onGameStateUpdate={(gameState) => {
+                // Handle real-time game state updates from other players
+                console.log('🎮 Multisynq game state updated:', gameState);
+              }}
+            >
           {/* Header and stats */}
           <header className="relative overflow-hidden border-b-2 border-cyan-400 shadow-2xl shadow-cyan-500/20">
             {/* Animated background with multiple layers */}
@@ -198,6 +206,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </WalletGate>
           </main>
+            </MultisynqGameSync>
           </Providers>
         )}
       </body>

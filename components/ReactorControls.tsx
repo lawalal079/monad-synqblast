@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi'
 import { ethers } from 'ethers'
 import ChainReactionGameABI from '../abi/ChainReactionGame.json'
+import { useMultisynq } from './MultisynqGameSync'
 
 const CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_CHAIN_REACTION_GAME_ADDRESS!;
 
@@ -25,6 +26,9 @@ export default function ReactorControls({ isConnected, onReactorDeployed, curren
   const { address } = useAccount()
   const { data: walletClient } = useWalletClient()
   const publicClient = usePublicClient()
+  
+  // Multisynq integration for real-time multiplayer
+  const multisynq = useMultisynq()
 
   // Fetch player score when component mounts or address changes
   React.useEffect(() => {
@@ -148,8 +152,13 @@ export default function ReactorControls({ isConnected, onReactorDeployed, curren
         // Post-deployment verification failed - fail silently
       }
       
+      // 🚀 MULTISYNQ: Sync reactor deployment with all players in real-time
+      if (multisynq) {
+        multisynq.deployReactor(x, y, reactorType.toString(), energyToDeploy, hash);
+        console.log('🎮 Reactor deployed and synced with Multisynq:', { x, y, energy: energyToDeploy });
+      }
+      
       // Trigger refresh of game board using multiple methods for reliability
-
       
       // Method 1: localStorage (for polling mechanism)
       localStorage.setItem('reactorDeployed', Date.now().toString());
