@@ -152,45 +152,71 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
         return;
       }
       
-      // Fetch reactors from contract (should be empty if new round just started)
+      // Fetch reactors from contract
       const allReactors = await contract.getAllReactors();
       
-      // NUCLEAR OPTION: Block ALL old reactors - only show empty board until new deployment
-      const currentRoundNumber = Number(actualRound); // Normalize to number
-      const activeReactors = [];
+      // STRICT ROUND FILTERING: Only show reactors deployed in current round
+      const currentRoundNumber = Number(actualRound);
+      let activeReactors: ReactorData[] = [];
       
-      // DEAD SIMPLE: Show only the user's most recent reactor
-      // This eliminates all the complex round tracking that's causing issues
+      // Get list of reactors deployed in current round from localStorage
+      const currentRoundReactorsKey = `currentRoundReactors_${currentRoundNumber}`;
+      const currentRoundReactorIds = JSON.parse(localStorage.getItem(currentRoundReactorsKey) || '[]');
       
-      if (address) {
-        let mostRecentReactor = null;
-        let highestId = 0;
+      if (viewMode === 'private') {
+        // Private mode: show user's reactors from current round only
+        const userReactors: ReactorData[] = [];
         
-        // Find the user's most recent reactor
         for (let i = 0; i < allReactors.length; i++) {
           const r = allReactors[i];
+          
+          // Only show reactors that are:
+          // 1. Active
+          // 2. Owned by current user  
+          // 3. Deployed in current round (tracked in localStorage)
           if (r.isActive && 
-              r.owner.toLowerCase() === address.toLowerCase() && 
-              Number(r.id) > highestId) {
-            highestId = Number(r.id);
-            mostRecentReactor = {
+              r.owner.toLowerCase() === address.toLowerCase() &&
+              currentRoundReactorIds.includes(Number(r.id))) {
+            userReactors.push({
               id: Number(r.id),
               x: Number(r.x),
               y: Number(r.y),
               energy: Number(r.energy),
               owner: r.owner,
               isActive: r.isActive
-            };
+            });
           }
         }
         
-        // Show only the most recent reactor
-        if (mostRecentReactor) {
-          activeReactors.push(mostRecentReactor);
+        // Sort by ID (most recent first) and take up to 10
+        userReactors.sort((a, b) => b.id - a.id);
+        activeReactors = userReactors.slice(0, 10);
+      } else {
+        // Public mode: show all players' reactors from current round only
+        const allActiveReactors: ReactorData[] = [];
+        
+        for (let i = 0; i < allReactors.length; i++) {
+          const r = allReactors[i];
+          
+          // Only show reactors that are:
+          // 1. Active
+          // 2. Deployed in current round (tracked in localStorage)
+          if (r.isActive && currentRoundReactorIds.includes(Number(r.id))) {
+            allActiveReactors.push({
+              id: Number(r.id),
+              x: Number(r.x),
+              y: Number(r.y),
+              energy: Number(r.energy),
+              owner: r.owner,
+              isActive: r.isActive
+            });
+          }
         }
+        
+        // Sort by ID (most recent first) and take up to 10
+        allActiveReactors.sort((a, b) => b.id - a.id);
+        activeReactors = allActiveReactors.slice(0, 10);
       }
-      
-
       
       setReactors(activeReactors);
       
@@ -207,6 +233,7 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
     try {
       const provider = new ethers.BrowserProvider(window.ethereum);
       const contract = new ethers.Contract(CONTRACT_ADDRESS, ChainReactionGameABI.abi, provider);
+      
       const playerScore = await contract.playerScore(address);
       const realScore = Number(playerScore);
       setScore(realScore);
@@ -330,21 +357,6 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
       const hash = await walletClient.writeContract(request);
       
       await publicClient.waitForTransactionReceipt({ hash });
-      
-      // 🚀 MULTISYNQ: Sync reactor trigger with all players in real-time
-      if (multisynq && selectedReactors.length > 0) {
-        selectedReactors.forEach(reactorId => {
-          const reactor = reactors.find(r => r.id === reactorId);
-          if (reactor) {
-            multisynq.triggerReactor(reactor.x, reactor.y, { 
-              chainLength: selectedReactors.length,
-              txHash: hash,
-              timestamp: Date.now()
-            });
-          }
-        });
-        console.log('🎮 Reactors triggered and synced with Multisynq:', selectedReactors.length);
-      }
       
       setSelectedReactors([]); // Clear selection after trigger
       await refreshBoard();

@@ -39,6 +39,7 @@ const queryClient = new QueryClient();
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [isClient, setIsClient] = useState(false);
+  const [web3ModalReady, setWeb3ModalReady] = useState(false);
 
   useEffect(() => {
     // Initialize Web3Modal only after component mounts on client
@@ -60,8 +61,11 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         });
         
         console.log('Web3Modal initialized successfully');
+        setWeb3ModalReady(true);
       } catch (error) {
         console.error('Error initializing Web3Modal:', error);
+        // Set ready anyway to prevent infinite loading
+        setWeb3ModalReady(true);
       }
     };
 
@@ -70,7 +74,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
 
   // Don't render children until Web3Modal is initialized on client
   // But don't show loading UI since splash screen handles it
-  if (!isClient) {
+  if (!isClient || !web3ModalReady) {
     return (
       <QueryClientProvider client={queryClient}>
         <WagmiProvider config={wagmiConfig}>

@@ -137,25 +137,42 @@ export default function ReactorControls({ isConnected, onReactorDeployed, curren
         );
         
         if (ourReactor) {
-          // Track this reactor ID for the current round
+          // Track this reactor ID for the current round using the same key format as GameBoard
           const reactorId = Number(ourReactor.id);
-          const roundReactorsKey = `roundReactors_${address}`;
-          const roundReactorIds = JSON.parse(localStorage.getItem(roundReactorsKey) || '[]');
           
-          if (!roundReactorIds.includes(reactorId)) {
-            roundReactorIds.push(reactorId);
-            localStorage.setItem(roundReactorsKey, JSON.stringify(roundReactorIds));
+          // Get current round number (EXACT same logic as GameBoard)
+          try {
+            // Use the exact same getUtcRoundInfo function as GameBoard
+            function getUtcRoundInfo() {
+              const now = new Date();
+              const utcHours = now.getUTCHours();
+              const utcMinutes = now.getUTCMinutes();
+              const utcSeconds = now.getUTCSeconds();
+              const secondsSinceMidnight = utcHours * 3600 + utcMinutes * 60 + utcSeconds;
+              const roundDuration = 5 * 60; // 5 minutes in seconds
+              const currentRound = Math.floor(secondsSinceMidnight / roundDuration) + 1; // 1-based
+              return { currentRound };
+            }
+            
+            const currentUtcRound = getUtcRoundInfo();
+            const currentRoundNumber = currentUtcRound.currentRound;
+            
+            // Use the same localStorage key format as GameBoard expects
+            const currentRoundReactorsKey = `currentRoundReactors_${currentRoundNumber}`;
+            const currentRoundReactorIds = JSON.parse(localStorage.getItem(currentRoundReactorsKey) || '[]');
+            
+            if (!currentRoundReactorIds.includes(reactorId)) {
+              currentRoundReactorIds.push(reactorId);
+              localStorage.setItem(currentRoundReactorsKey, JSON.stringify(currentRoundReactorIds));
+            }
+          } catch (error) {
+            // Fallback: track without round filtering if round detection fails
+            console.warn('Could not determine current round for reactor tracking');
           }
         }
 
       } catch (verifyError) {
         // Post-deployment verification failed - fail silently
-      }
-      
-      // 🚀 MULTISYNQ: Sync reactor deployment with all players in real-time
-      if (multisynq) {
-        multisynq.deployReactor(x, y, reactorType.toString(), energyToDeploy, hash);
-        console.log('🎮 Reactor deployed and synced with Multisynq:', { x, y, energy: energyToDeploy });
       }
       
       // Trigger refresh of game board using multiple methods for reliability
@@ -180,14 +197,11 @@ export default function ReactorControls({ isConnected, onReactorDeployed, curren
       
     } catch (error: any) {
       // Deploy reactor failed - fail silently
-      setError(error.message || 'Failed to deploy reactor')
+      setError(error.message || 'Failed to deploy reactor');
     } finally {
-      setIsDeploying(false)
+      setIsDeploying(false);
     }
   }
-
-
-
 
   return (
     <div className="relative bg-gradient-to-br from-gray-900/90 via-blue-900/30 to-purple-900/30 backdrop-blur-sm rounded-lg p-6 border-2 border-cyan-400 shadow-2xl shadow-cyan-500/20 overflow-hidden">
@@ -357,4 +371,4 @@ export default function ReactorControls({ isConnected, onReactorDeployed, curren
       </div>
     </div>
   )
-} 
+}
