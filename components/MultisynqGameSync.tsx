@@ -88,18 +88,28 @@ export default function MultisynqGameSync({
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_MULTISYNQ_API_KEY;
     
+    // Debug logging for API key
+    console.log('🔑 Multisynq API Key Debug:');
+    console.log('  - API Key exists:', !!apiKey);
+    console.log('  - API Key length:', apiKey ? apiKey.length : 0);
+    console.log('  - API Key first 10 chars:', apiKey ? apiKey.substring(0, 10) + '...' : 'N/A');
+    console.log('  - Environment:', process.env.NODE_ENV);
+    
     // Only initialize if API key is present
     if (!apiKey) {
+      console.log('❌ No Multisynq API key found - multiplayer disabled');
       return;
     }
 
     const initializeMultisynq = async () => {
       // Only initialize if we have a valid API key from .env file
       if (!apiKey || apiKey === 'your_multisynq_api_key_here' || apiKey === 'demo-key') {
+        console.log('❌ Invalid or placeholder API key detected');
         setHasValidApiKey(false);
         return;
       }
       
+      console.log('✅ Valid API key detected - initializing Multisynq');
       setHasValidApiKey(true);
       
       try {
