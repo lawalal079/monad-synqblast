@@ -55,7 +55,7 @@ class SynqBlastGameModel extends Multisynq.Model {
       round: this.currentRound
     });
     
-    console.log(`Reactor deployed by ${playerId} at (${x}, ${y}) with ${energyLevel} energy`);
+
   }
 
   // Handle reactor triggering from any player
@@ -83,7 +83,7 @@ class SynqBlastGameModel extends Multisynq.Model {
         round: this.currentRound
       });
       
-      console.log(`Reactor triggered by ${playerId} at (${x}, ${y})`);
+
     }
   }
 
@@ -99,7 +99,7 @@ class SynqBlastGameModel extends Multisynq.Model {
       timestamp: Date.now()
     });
     
-    console.log(`Player ${playerId} joined the game`);
+
   }
 
   // Handle player leaving the game
@@ -113,7 +113,7 @@ class SynqBlastGameModel extends Multisynq.Model {
       timestamp: Date.now()
     });
     
-    console.log(`Player ${playerId} left the game`);
+
   }
 
   // Handle leaderboard updates
@@ -147,7 +147,7 @@ class SynqBlastGameModel extends Multisynq.Model {
       timestamp: Date.now()
     });
     
-    console.log(`Phase changed to ${newPhase}, Round ${this.currentRound}`);
+
     
     // Schedule next phase change
     this.schedulePhaseChange();

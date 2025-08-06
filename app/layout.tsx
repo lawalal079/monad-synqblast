@@ -68,7 +68,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               onPhaseChange={(phase, round) => setCurrentPhase(phase)}
               onGameStateUpdate={(gameState) => {
                 // Handle real-time game state updates from other players
-                console.log('🎮 Multisynq game state updated:', gameState);
               }}
             >
           {/* Header and stats */}

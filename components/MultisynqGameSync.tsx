@@ -14,6 +14,7 @@ export const useMultisynq = () => {
 
 interface MultisynqGameSyncProps {
   children: React.ReactNode;
+  onPhaseChange?: (phase: any, round: any) => void;
   onGameStateUpdate?: (gameState: any) => void;
   onPlayerJoined?: (playerId: string) => void;
   onPlayerLeft?: (playerId: string) => void;
@@ -122,7 +123,7 @@ export default function MultisynqGameSync({
           return;
         }
         
-        console.log('✅ SynqBlastGameModel found:', window.SynqBlastGameModel);
+
         
         // Start the Multisynq session (it returns a Promise)
         const multisynqSession = await window.Multisynq.Session.join({
@@ -134,9 +135,7 @@ export default function MultisynqGameSync({
           password: window.Multisynq.App.autoPassword()
         });
 
-        console.log('✅ Multisynq session joined successfully:', multisynqSession);
-        console.log('🔍 Session object keys:', Object.keys(multisynqSession));
-        console.log('🔍 Session prototype methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(multisynqSession)));
+
         
         viewRef.current = multisynqSession;
         setMultisynq(multisynqSession);
@@ -153,23 +152,22 @@ export default function MultisynqGameSync({
           }
           
           const sessionUrlValue = currentUrl.toString();
-          console.log('🔗 Session URL created:', sessionUrlValue);
+
           
           // Store session URL in component state and localStorage
           setSessionUrl(sessionUrlValue);
           localStorage.setItem('multisynq_session_url', sessionUrlValue);
           
           // Always create our own QR code since Multisynq's widget doesn't appear in our designated area
-          console.log('🔍 Creating custom QR code for session:', sessionIdValue);
+
           createFallbackQRCode(sessionUrlValue);
           
           // Still try Multisynq's widget in case it works elsewhere
           if (window.Multisynq && window.Multisynq.App) {
             try {
               window.Multisynq.App.makeWidgetDock();
-              console.log('🔍 Multisynq QR widget also attempted (may appear elsewhere)');
             } catch (error) {
-              console.log('🔍 Multisynq QR widget failed:', error);
+              // QR widget failed silently
             }
           }
         }
@@ -179,7 +177,7 @@ export default function MultisynqGameSync({
           let count = 1; // Default to 1 (this player)
           let method = 'default';
           
-          console.log('🔍 Checking player count...');
+
           
           // Try Multisynq methods first
           if (typeof multisynqSession.userCount === 'number' && multisynqSession.userCount > 0) {
@@ -204,13 +202,13 @@ export default function MultisynqGameSync({
           // Ensure count is never 0 (at least this player exists)
           count = Math.max(1, count);
           
-          console.log(`🎮 Player count: ${count} (method: ${method})`);
+
           setPlayerCount(count);
         };
         
         // Reset and set session count to 1 for this session (avoid stale counts)
         localStorage.setItem('multisynq_session_count', '1');
-        console.log('🔍 Reset session count to 1 for new session');
+
         
         // Helper function to create fallback QR code
         const createFallbackQRCode = (url: string) => {
@@ -231,11 +229,11 @@ export default function MultisynqGameSync({
             qrImg.style.maxHeight = `${qrSize}px`;
             
             qrImg.onload = () => {
-              console.log('✅ Fallback QR code generated successfully');
+
             };
             
             qrImg.onerror = () => {
-              console.log('❌ Fallback QR code generation failed');
+
               qrContainer.innerHTML = '<div class="text-xs text-gray-500 p-2">QR code unavailable</div>';
             };
             
@@ -273,7 +271,7 @@ export default function MultisynqGameSync({
           // Decrement session count when tab closes
           const currentCount = parseInt(localStorage.getItem('multisynq_session_count') || '1');
           localStorage.setItem('multisynq_session_count', Math.max(0, currentCount - 1).toString());
-          console.log('🔍 Decremented session count to:', Math.max(0, currentCount - 1));
+
         };
         
         // Handle page unload
@@ -425,7 +423,7 @@ export default function MultisynqGameSync({
                     onClick={() => {
                       if (sessionUrl) {
                         navigator.clipboard.writeText(sessionUrl).then(() => {
-                          console.log('📋 Session URL copied to clipboard');
+
                           // Brief visual feedback
                           const btn = event?.target as HTMLButtonElement;
                           if (btn) {
@@ -483,8 +481,8 @@ export default function MultisynqGameSync({
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(sessionUrl)}`}
                 alt="Session QR Code"
                 className="w-48 h-48 rounded"
-                onLoad={() => console.log('✅ Modal QR code loaded successfully')}
-                onError={() => console.log('❌ Modal QR code failed to load')}
+                onLoad={() => {}}
+                onError={() => {}}
               />
             </div>
           </div>
