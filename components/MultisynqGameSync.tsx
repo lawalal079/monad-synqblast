@@ -162,6 +162,37 @@ export default function MultisynqGameSync({
           const sessionUrlValue = currentUrl.toString();
 
           
+          // Helper function to create fallback QR code
+          const createFallbackQRCode = (url: string) => {
+            const qrContainer = document.getElementById('qr-code-widget');
+            if (qrContainer && url) {
+              // Clear existing content
+              qrContainer.innerHTML = '';
+              
+              // Create QR code using qr-server.com (free service)
+              const qrSize = 120;
+              const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(url)}`;
+              
+              const qrImg = document.createElement('img');
+              qrImg.src = qrUrl;
+              qrImg.alt = 'Session QR Code';
+              qrImg.className = 'w-full h-auto rounded';
+              qrImg.style.maxWidth = `${qrSize}px`;
+              qrImg.style.maxHeight = `${qrSize}px`;
+              
+              qrImg.onload = () => {
+
+              };
+              
+              qrImg.onerror = () => {
+
+                qrContainer.innerHTML = '<div class="text-xs text-gray-500 p-2">QR code unavailable</div>';
+              };
+              
+              qrContainer.appendChild(qrImg);
+            }
+          };
+
           // Store session URL in component state and localStorage
           setSessionUrl(sessionUrlValue);
           localStorage.setItem('multisynq_session_url', sessionUrlValue);
@@ -218,36 +249,7 @@ export default function MultisynqGameSync({
         localStorage.setItem('multisynq_session_count', '1');
 
         
-        // Helper function to create fallback QR code
-        const createFallbackQRCode = (url: string) => {
-          const qrContainer = document.getElementById('qr-code-widget');
-          if (qrContainer && url) {
-            // Clear existing content
-            qrContainer.innerHTML = '';
-            
-            // Create QR code using qr-server.com (free service)
-            const qrSize = 120;
-            const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${qrSize}x${qrSize}&data=${encodeURIComponent(url)}`;
-            
-            const qrImg = document.createElement('img');
-            qrImg.src = qrUrl;
-            qrImg.alt = 'Session QR Code';
-            qrImg.className = 'w-full h-auto rounded';
-            qrImg.style.maxWidth = `${qrSize}px`;
-            qrImg.style.maxHeight = `${qrSize}px`;
-            
-            qrImg.onload = () => {
 
-            };
-            
-            qrImg.onerror = () => {
-
-              qrContainer.innerHTML = '<div class="text-xs text-gray-500 p-2">QR code unavailable</div>';
-            };
-            
-            qrContainer.appendChild(qrImg);
-          }
-        };
         
         // Initial player count
         updatePlayerCount();
