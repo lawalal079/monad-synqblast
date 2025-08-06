@@ -143,7 +143,7 @@ export default function ReactorControls({ isConnected, onReactorDeployed, curren
           // Get current round number (EXACT same logic as GameBoard)
           try {
             // Use the exact same getUtcRoundInfo function as GameBoard
-            function getUtcRoundInfo() {
+            const getUtcRoundInfo = () => {
               const now = new Date();
               const utcHours = now.getUTCHours();
               const utcMinutes = now.getUTCMinutes();
@@ -152,7 +152,7 @@ export default function ReactorControls({ isConnected, onReactorDeployed, curren
               const roundDuration = 5 * 60; // 5 minutes in seconds
               const currentRound = Math.floor(secondsSinceMidnight / roundDuration) + 1; // 1-based
               return { currentRound };
-            }
+            };
             
             const currentUtcRound = getUtcRoundInfo();
             const currentRoundNumber = currentUtcRound.currentRound;
