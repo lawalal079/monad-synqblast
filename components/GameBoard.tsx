@@ -175,7 +175,7 @@ export default function GameBoard({ isConnected, onScoreUpdate, onReactorDeploye
           // 2. Owned by current user  
           // 3. Deployed in current round (tracked in localStorage)
           if (r.isActive && 
-              r.owner.toLowerCase() === address.toLowerCase() &&
+              address && r.owner.toLowerCase() === address.toLowerCase() &&
               currentRoundReactorIds.includes(Number(r.id))) {
             userReactors.push({
               id: Number(r.id),
