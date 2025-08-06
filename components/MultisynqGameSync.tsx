@@ -3,6 +3,14 @@
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { useAccount } from 'wagmi';
 
+// Extend Window interface for Multisynq
+declare global {
+  interface Window {
+    Multisynq: any;
+    SynqBlastGameModel: any;
+  }
+}
+
 // Context for sharing Multisynq state across components
 const MultisynqContext = createContext<any>(null);
 
