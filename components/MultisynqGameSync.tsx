@@ -88,28 +88,18 @@ export default function MultisynqGameSync({
   useEffect(() => {
     const apiKey = process.env.NEXT_PUBLIC_MULTISYNQ_API_KEY;
     
-    // Debug logging for API key
-    console.log('🔑 Multisynq API Key Debug:');
-    console.log('  - API Key exists:', !!apiKey);
-    console.log('  - API Key length:', apiKey ? apiKey.length : 0);
-    console.log('  - API Key first 10 chars:', apiKey ? apiKey.substring(0, 10) + '...' : 'N/A');
-    console.log('  - Environment:', process.env.NODE_ENV);
-    
     // Only initialize if API key is present
     if (!apiKey) {
-      console.log('❌ No Multisynq API key found - multiplayer disabled');
       return;
     }
 
     const initializeMultisynq = async () => {
       // Only initialize if we have a valid API key from .env file
       if (!apiKey || apiKey === 'your_multisynq_api_key_here' || apiKey === 'demo-key') {
-        console.log('❌ Invalid or placeholder API key detected');
         setHasValidApiKey(false);
         return;
       }
       
-      console.log('✅ Valid API key detected - initializing Multisynq');
       setHasValidApiKey(true);
       
       try {
@@ -132,22 +122,19 @@ export default function MultisynqGameSync({
           }
         }
 
-        // Register the view
+        // Register the view with original method
         SynqBlastView.viewName = "SynqBlastView";
 
         // Wait for model to be available
         if (!window.SynqBlastGameModel) {
-          console.error('❌ SynqBlastGameModel not found on window object');
           return;
         }
         
-
-        
-        // Start the Multisynq session (it returns a Promise)
+        // Start the Multisynq session
         const multisynqSession = await window.Multisynq.Session.join({
           apiKey: apiKey,
           tps: 20,
-          model: window.SynqBlastGameModel, // Use the actual model class
+          model: window.SynqBlastGameModel,
           view: SynqBlastView,
           name: window.Multisynq.App.autoSession(),
           password: window.Multisynq.App.autoPassword()
@@ -307,29 +294,41 @@ export default function MultisynqGameSync({
     // Store cleanup functions
     let cleanupFunctions: (() => void)[] = [];
 
-    // Load Multisynq library and initialize
-    if (typeof window !== 'undefined' && !window.Multisynq) {
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/@multisynq/client@latest/bundled/multisynq-client.min.js';
-      script.onload = () => {
-        // Load our game model from public folder
-        const modelScript = document.createElement('script');
-        modelScript.src = '/MultisynqGameModel.js';
-        modelScript.onload = async () => {
-          const cleanup = await initializeMultisynq();
+    // Load Multisynq library and initialize (prevent duplicates)
+    if (typeof window !== 'undefined') {
+      if (!window.Multisynq) {
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@multisynq/client@latest/bundled/multisynq-client.min.js';
+        script.onload = () => {
+          // Only load model if not already loaded
+          if (!window.SynqBlastGameModel) {
+            const modelScript = document.createElement('script');
+            modelScript.src = '/MultisynqGameModel.js';
+            modelScript.onload = async () => {
+              const cleanup = await initializeMultisynq();
+              if (cleanup) {
+                cleanupFunctions.push(cleanup);
+              }
+            };
+            document.head.appendChild(modelScript);
+          } else {
+            // Model already loaded, just initialize
+            initializeMultisynq().then(cleanup => {
+              if (cleanup) {
+                cleanupFunctions.push(cleanup);
+              }
+            });
+          }
+        };
+        document.head.appendChild(script);
+      } else if (window.Multisynq && window.SynqBlastGameModel) {
+        // Both already loaded, initialize directly
+        initializeMultisynq().then(cleanup => {
           if (cleanup) {
             cleanupFunctions.push(cleanup);
           }
-        };
-        document.head.appendChild(modelScript);
-      };
-      document.head.appendChild(script);
-    } else if (window.Multisynq) {
-      initializeMultisynq().then(cleanup => {
-        if (cleanup) {
-          cleanupFunctions.push(cleanup);
-        }
-      });
+        });
+      }
     }
 
     // Cleanup on unmount
@@ -523,7 +522,6 @@ export default function MultisynqGameSync({
                   e.preventDefault();
                   if (sessionUrl) {
                     navigator.clipboard.writeText(sessionUrl).then(() => {
-                      console.log('📋 Session URL copied from modal');
                       // Brief visual feedback
                       const btn = e.target as HTMLButtonElement;
                       if (btn) {
